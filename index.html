@@ -1,195 +1,232 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>cyrus' site</title>
-        <link rel="icon" type="image/x-icon" href="favicon.ico" />
-        <style>
-            body,
-            html {
-                margin: 0;
-                padding: 0;
-                height: 100%;
-                overflow: hidden;
-                background-color: black;
-                font-family: "Times New Roman", Times, serif;
-                color: white;
-            }
-            #canvas {
-                position: absolute;
-                top: 0;
-                left: 0;
-                touch-action: none;
-            }
-            .name {
-                position: absolute;
-                top: 44%;
-                left: 11%;
-                font-size: 48px;
-                z-index: 10;
-            }
-            .links {
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                font-size: 18px;
-                z-index: 10;
-            }
-            .links ul {
-                list-style-type: none;
-                padding: 0;
-                margin: 0;
-                display: flex;
-            }
-            .links li {
-                margin-left: 20px;
-            }
-            .prevent-select {
-                -webkit-user-select: none;
-                -ms-user-select: none;
-                user-select: none;
-            }
-            a,
-            a:hover,
-            a:visited,
-            a:active {
-                color: inherit;
-                text-decoration: none;
-            }
-        </style>
-    </head>
-    <body>
-        <canvas id="canvas"></canvas>
-        <div class="name prevent-select">cyrus anton kalafchi</div>
-        <div class="links prevent-select">
-            <ul>
-                <li>
-                    <a href="https://www.linkedin.com/in/cyruskalafchi"
-                        >linkedin</a
-                    >
-                </li>
-                <li><a href="https://github.com/ckrowbar">github</a></li>
-                <li>
-                    <a href="https://open.spotify.com/user/c2ke">spotify</a>
-                </li>
-            </ul>
-        </div>
-        <script>
-            const canvas = document.getElementById("canvas");
-            const ctx = canvas.getContext("2d");
 
-            function resizeCanvas() {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-                ctx.fillStyle = "black";
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-            }
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>cyrus' site</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            background-color: black;
+            font-family: "Times New Roman", Times, serif;
+            color: white;
+        }
 
-            resizeCanvas();
-            window.addEventListener("resize", resizeCanvas);
+        #canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            touch-action: none;
+        }
 
-            const pixelSize = 4;
-            let lastX = null;
-            let lastY = null;
-            const isMobile =
-                "ontouchstart" in window || navigator.maxTouchPoints > 0;
-            let isMouseDown = false;
-            let isDrawing = false;
+        .name {
+            position: absolute;
+            top: 44%;
+            left: 11%;
+            font-size: 48px;
+            letter-spacing: 0.15em;
+            z-index: 10;
+            max-width: 90%;
+            line-height: 1.2;
+        }
 
-            function drawPixel(x, y) {
-                ctx.fillStyle = "white";
-                ctx.fillRect(x, y, pixelSize, pixelSize);
-            }
+        .links {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            font-size: 18px;
+            z-index: 10;
+        }
 
-            function drawLine(x0, y0, x1, y1) {
-                const dx = Math.abs(x1 - x0);
-                const dy = Math.abs(y1 - y0);
-                const sx = x0 < x1 ? pixelSize : -pixelSize;
-                const sy = y0 < y1 ? pixelSize : -pixelSize;
-                let err = dx - dy;
+        .links ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+        }
 
-                while (true) {
-                    drawPixel(x0, y0);
+        .links li {
+            margin-left: 20px;
+        }
 
-                    if (x0 === x1 && y0 === y1) break;
-                    const e2 = 2 * err;
-                    if (e2 > -dy) {
-                        err -= dy;
-                        x0 += sx;
-                    }
-                    if (e2 < dx) {
-                        err += dx;
-                        y0 += sy;
-                    }
-                }
-            }
+        .prevent-select {
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
 
-            function handleDraw(x, y) {
-                const adjustedX = Math.floor(x / pixelSize) * pixelSize;
-                const adjustedY = Math.floor(y / pixelSize) * pixelSize;
+        a,
+        a:hover,
+        a:visited,
+        a:active {
+            color: inherit;
+            text-decoration: none;
+            font-style: italic;
+            letter-spacing: 0.08em;
+        }
 
-                if (!isDrawing) {
-                    isDrawing = true;
-                    lastX = adjustedX;
-                    lastY = adjustedY;
-                    drawPixel(adjustedX, adjustedY);
-                } else {
-                    drawLine(lastX, lastY, adjustedX, adjustedY);
-                    lastX = adjustedX;
-                    lastY = adjustedY;
-                }
-            }
+        .clear-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            font-size: 18px;
+            font-family: "Times New Roman", Times, serif;
+            font-style: normal;
+            letter-spacing: 0.08em;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            z-index: 10;
+            padding: 0;
+        }
+    </style>
+</head>
 
-            function handleMouseMove(e) {
-                if (!isMouseDown) {
-                    handleDraw(e.clientX, e.clientY);
-                }
-            }
+<body>
+    <canvas id="canvas"></canvas>
+    <div class="name prevent-select">cyrus<br>kalafchi</div>
+    <div class="links prevent-select">
+        <ul>
+            <li>
+                <a href="https://www.linkedin.com/in/cyruskalafchi">linkedin</a>
+            </li>
+            <li><a href="https://github.com/ckrowbar">github</a></li>
+            <li>
+                <a href="https://ckrow.bar">ckrowbar</a>
+            </li>
+        </ul>
+    </div>
+    <button class="clear-button prevent-select" id="clearButton">[ clear ]</button>
+    <script>
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+        const clearButton = document.getElementById("clearButton");
 
-            function handleMouseDown() {
-                isMouseDown = true;
-                isDrawing = false;
-            }
-
-            function handleMouseUp() {
-                isMouseDown = false;
-                isDrawing = false;
-            }
-
-            function handleTouchMove(e) {
-                e.preventDefault();
-                const touch = e.touches[0];
-                handleDraw(touch.clientX, touch.clientY);
-            }
-
-            function handleTouchStart(e) {
-                e.preventDefault();
-                isDrawing = false;
-                const touch = e.touches[0];
-                handleDraw(touch.clientX, touch.clientY);
-            }
-
-            if (isMobile) {
-                canvas.addEventListener("touchstart", handleTouchStart, {
-                    passive: false,
-                });
-                canvas.addEventListener("touchmove", handleTouchMove, {
-                    passive: false,
-                });
-            } else {
-                canvas.addEventListener("mousemove", handleMouseMove);
-                canvas.addEventListener("mousedown", handleMouseDown);
-                canvas.addEventListener("mouseup", handleMouseUp);
-                canvas.addEventListener("mouseout", () => {
-                    isMouseDown = false;
-                    isDrawing = false;
-                });
-            }
-
-            // Initial black background
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
             ctx.fillStyle = "black";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-        </script>
-    </body>
+        }
+
+        resizeCanvas();
+        window.addEventListener("resize", resizeCanvas);
+
+        const pixelSize = 4;
+        let lastX = null;
+        let lastY = null;
+        const isMobile =
+            "ontouchstart" in window || navigator.maxTouchPoints > 0;
+        let isMouseDown = false;
+        let isDrawing = false;
+
+        function drawPixel(x, y) {
+            ctx.fillStyle = "white";
+            ctx.fillRect(x, y, pixelSize, pixelSize);
+        }
+
+        function drawLine(x0, y0, x1, y1) {
+            const dx = Math.abs(x1 - x0);
+            const dy = Math.abs(y1 - y0);
+            const sx = x0 < x1 ? pixelSize : -pixelSize;
+            const sy = y0 < y1 ? pixelSize : -pixelSize;
+            let err = dx - dy;
+
+            while (true) {
+                drawPixel(x0, y0);
+
+                if (x0 === x1 && y0 === y1) break;
+                const e2 = 2 * err;
+                if (e2 > -dy) {
+                    err -= dy;
+                    x0 += sx;
+                }
+                if (e2 < dx) {
+                    err += dx;
+                    y0 += sy;
+                }
+            }
+        }
+
+        function handleDraw(x, y) {
+            const adjustedX = Math.floor(x / pixelSize) * pixelSize;
+            const adjustedY = Math.floor(y / pixelSize) * pixelSize;
+
+            if (!isDrawing) {
+                isDrawing = true;
+                lastX = adjustedX;
+                lastY = adjustedY;
+                drawPixel(adjustedX, adjustedY);
+            } else {
+                drawLine(lastX, lastY, adjustedX, adjustedY);
+                lastX = adjustedX;
+                lastY = adjustedY;
+            }
+        }
+
+        function handleMouseMove(e) {
+            if (!isMouseDown) {
+                handleDraw(e.clientX, e.clientY);
+            }
+        }
+
+        function handleMouseDown() {
+            isMouseDown = true;
+            isDrawing = false;
+        }
+
+        function handleMouseUp() {
+            isMouseDown = false;
+            isDrawing = false;
+        }
+
+        function handleTouchMove(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            handleDraw(touch.clientX, touch.clientY);
+        }
+
+        function handleTouchStart(e) {
+            e.preventDefault();
+            isDrawing = false;
+            const touch = e.touches[0];
+            handleDraw(touch.clientX, touch.clientY);
+        }
+
+        if (isMobile) {
+            canvas.addEventListener("touchstart", handleTouchStart, {
+                passive: false,
+            });
+            canvas.addEventListener("touchmove", handleTouchMove, {
+                passive: false,
+            });
+        } else {
+            canvas.addEventListener("mousemove", handleMouseMove);
+            canvas.addEventListener("mousedown", handleMouseDown);
+            canvas.addEventListener("mouseup", handleMouseUp);
+            canvas.addEventListener("mouseout", () => {
+                isMouseDown = false;
+                isDrawing = false;
+            });
+        }
+
+        // Clear button functionality
+        clearButton.addEventListener("click", () => {
+            ctx.fillStyle = "black";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        });
+
+        // Initial black background
+        ctx.fillStyle = "black";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    </script>
+</body>
+
 </html>
